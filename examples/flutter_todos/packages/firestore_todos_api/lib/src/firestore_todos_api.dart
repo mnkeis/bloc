@@ -81,10 +81,23 @@ class FirestoreTodosApi implements TodosApi {
     });
   }
 
+  /// This method uses the Batch write api for
+  /// executing multiple operations in a single operation,
+  /// which in this case is to mark all the todos as
+  /// completed
   @override
   Future<int> completeAll({required bool isCompleted}) {
-    // TODO: implement completeAll
-    throw UnimplementedError();
+    final batch = FirebaseFirestore.instance.batch();
+    return todosCollection.get().then((querySnapshot) {
+      final completedTodosAmount = querySnapshot.docs.length;
+      for (final document in querySnapshot.docs) {
+        final completedTodo =
+            Todo.fromJson(document.data()).copyWith(isCompleted: true);
+        batch.update(document.reference, completedTodo.toJson());
+      }
+      batch.commit();
+      return completedTodosAmount;
+    });
   }
 }
 
@@ -100,6 +113,4 @@ extension TodoX on Todo {
     }
     throw const FormatException();
   }
-
-  /// returns
 }

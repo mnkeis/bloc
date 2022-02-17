@@ -7,6 +7,7 @@ environment:
   sdk: ">=2.16.0 <3.0.0"
 
 dependencies:
+  cloud_firestore: ^3.1.8
   flutter:
     sdk: flutter
   todos_api:
@@ -15,4 +16,5 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  mocktail: ^0.2.0
   very_good_analysis: ^2.4.0

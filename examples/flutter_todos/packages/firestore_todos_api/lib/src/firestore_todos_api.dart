@@ -8,12 +8,9 @@ class FirestoreTodosApi implements TodosApi {
   /// {@macro firestore_todos_api}
   FirestoreTodosApi({
     required FirebaseFirestore firestore,
-    required String userId,
-  })  : _userId = userId,
-        _firestore = firestore;
+  }) : _firestore = firestore;
 
   final FirebaseFirestore _firestore;
-  final String _userId;
 
   @override
   Future<int> clearCompleted() {
@@ -35,13 +32,8 @@ class FirestoreTodosApi implements TodosApi {
 
   @override
   Stream<List<Todo>> getTodos() {
-    return _firestore
-        .collection('users')
-        .doc(_userId)
-        .collection('todos')
-        .snapshots()
-        .map(
-          (snapshot) => snapshot.docs.map(TodoEx.fromSnapshot).toList(),
+    return _firestore.collection('todos').snapshots().map(
+          (snapshot) => snapshot.docs.map(TodoEx._fromSnapshot).toList(),
         );
   }
 
@@ -57,7 +49,7 @@ class FirestoreTodosApi implements TodosApi {
 /// {@nedtemplate}
 extension TodoEx on Todo {
   /// Returns a Todo from a firestore snapshot
-  static Todo fromSnapshot(DocumentSnapshot snapshot) {
+  static Todo _fromSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data();
     if (data != null) {
       return Todo.fromJson(data as Map<String, dynamic>);

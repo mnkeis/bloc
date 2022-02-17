@@ -18,7 +18,6 @@ void main() {
       expect(
         FirestoreTodosApi(
           firestore: firestoreInstance,
-          userId: '',
         ),
         isNotNull,
       );

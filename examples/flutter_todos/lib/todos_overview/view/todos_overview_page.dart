@@ -104,6 +104,7 @@ class TodosOverviewView extends StatelessWidget {
                 children: [
                   for (final todo in state.filteredTodos)
                     TodoListTile(
+                      key: UniqueKey(),
                       todo: todo,
                       onToggleCompleted: (isCompleted) {
                         context.read<TodosOverviewBloc>().add(

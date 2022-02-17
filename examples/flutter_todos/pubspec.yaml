@@ -8,6 +8,11 @@ environment:
 
 dependencies:
   bloc: ^8.0.1
+  cloud_firestore: ^3.1.8
+  firebase_core: ^1.12.0
+  firestore_todos_api:
+    path: packages/firestore_todos_api
+
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.0

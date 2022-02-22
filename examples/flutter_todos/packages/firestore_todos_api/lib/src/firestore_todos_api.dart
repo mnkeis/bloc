@@ -62,12 +62,12 @@ class FirestoreTodosApi implements TodosApi {
   }
 
   /// This method uses the Batch write api for
-  /// executing multiple operations in a single operation,
+  /// executing multiple operations in a single call,
   /// which in this case is to delete all the todos that
   /// are marked completed
   @override
   Future<int> clearCompleted() {
-    final batch = FirebaseFirestore.instance.batch();
+    final batch = _firestore.batch();
     return todosCollection
         .where('isCompleted', isEqualTo: true)
         .get()
@@ -82,12 +82,12 @@ class FirestoreTodosApi implements TodosApi {
   }
 
   /// This method uses the Batch write api for
-  /// executing multiple operations in a single operation,
+  /// executing multiple operations in a single call,
   /// which in this case is to mark all the todos as
   /// completed
   @override
   Future<int> completeAll({required bool isCompleted}) {
-    final batch = FirebaseFirestore.instance.batch();
+    final batch = _firestore.batch();
     return todosCollection.get().then((querySnapshot) {
       final completedTodosAmount = querySnapshot.docs.length;
       for (final document in querySnapshot.docs) {

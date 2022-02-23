@@ -1,3 +1,10 @@
+/// For reference, check this out !
+///
+/// Felix described in an issue how he tests
+/// https://github.com/felangel/bloc/issues/2257
+/// That individual went on to make these tests
+/// https://github.com/jjochen/major_system_flutter/blob/main/packages/numbers_repository/test/firebase_numbers_repository_test.dart
+
 // ignore_for_file: prefer_const_constructors
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -124,11 +131,14 @@ void main() {
           final subject = createSubject();
 
           expect(
-              subject.getTodos(),
-              emits(subject.todosCollection
+            subject.getTodos(),
+            emits(
+              subject.todosCollection
                 ..orderBy('id').snapshots().map(
                       (snapshot) => snapshot.docs.map((e) => e.data()).toList(),
-                    )));
+                    ),
+            ),
+          );
 
           // verify(() => firestore.collection('Todos')).called(1);
         });
@@ -169,5 +179,4 @@ void main() {
   });
 }
 
-/// https://github.com/felangel/bloc/issues/2257
 /// https://utkarshkore.medium.com/writing-unit-tests-in-flutter-with-firebase-firestore-72f99be85737

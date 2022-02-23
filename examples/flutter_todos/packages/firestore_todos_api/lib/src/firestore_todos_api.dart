@@ -12,8 +12,12 @@ class FirestoreTodosApi implements TodosApi {
 
   final FirebaseFirestore _firestore;
 
-  /// a pointer to the firestore collection
-  late final todosCollection = _firestore.collection('todos');
+  /// a converter method for maintaining type-safety
+  late final todosCollection =
+      _firestore.collection('todos').withConverter<Todo>(
+            fromFirestore: (snapshot, _) => Todo.fromJson(snapshot.data()!),
+            toFirestore: (todo, _) => todo.toJson(),
+          );
 
   /// This stream orders the [Todo]'s by the
   /// time they were created, and then converts
@@ -21,8 +25,8 @@ class FirestoreTodosApi implements TodosApi {
   /// a [Todo]
   @override
   Stream<List<Todo>> getTodos() {
-    return todosCollection.orderBy('time').snapshots().map(
-          (snapshot) => snapshot.docs.map(TodoX._fromSnapshot).toList(),
+    return todosCollection.orderBy('id').snapshots().map(
+          (snapshot) => snapshot.docs.map((e) => e.data()).toList(),
         );
   }
 
@@ -35,8 +39,8 @@ class FirestoreTodosApi implements TodosApi {
     final check = await todosCollection.where('id', isEqualTo: todo.id).get();
 
     if (check.docs.isEmpty) {
-      final output = todo.toJson()
-        ..putIfAbsent('time', () => Timestamp.now().seconds.toString());
+      final output =
+          todo.copyWith(id: Timestamp.now().millisecondsSinceEpoch.toString());
 
       await todosCollection.add(output);
     } else {
@@ -91,8 +95,7 @@ class FirestoreTodosApi implements TodosApi {
     return todosCollection.get().then((querySnapshot) {
       final completedTodosAmount = querySnapshot.docs.length;
       for (final document in querySnapshot.docs) {
-        final completedTodo =
-            Todo.fromJson(document.data()).copyWith(isCompleted: true);
+        final completedTodo = document.data().copyWith(isCompleted: true);
         batch.update(document.reference, completedTodo.toJson());
       }
       batch.commit();

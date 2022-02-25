@@ -1,5 +1,7 @@
 /// For reference, check this out !
 ///
+/// Here is the FlutterFire Docs
+///https://firebase.flutter.dev/docs/testing/testing/
 /// Felix described in an issue how he tests
 /// https://github.com/felangel/bloc/issues/2257
 /// That individual went on to make these tests
@@ -82,6 +84,7 @@ void main() {
   );
   group('FirestoreTodosApi', () {
     late FirebaseFirestore firestore;
+    late DocumentReference<Map<String, dynamic>> documentReference;
     late CollectionReference<Map<String, dynamic>> todosCollection;
     late FirestoreTodosApi firestoreTodosApi;
     late DocumentReference mockDocumentReference;
@@ -129,6 +132,11 @@ void main() {
       group('initializes the todos stream', () {
         test('with existing todos if present', () {
           final subject = createSubject();
+
+          final document = MockDocumentReference();
+          when(() => firestore.doc('path/to/doc')).thenReturn(document);
+          when(document.snapshots)
+              .thenAnswer((_) => Stream<DocumentSnapshot>.fromIterable([]));
 
           expect(
             subject.getTodos(),
